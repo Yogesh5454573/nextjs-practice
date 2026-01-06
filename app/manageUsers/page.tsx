@@ -37,6 +37,7 @@ export default function Page() {
         `http://nextjs-api.in/api/deleteUser/${id}`,
         {
           method: "DELETE",
+          credentials: "include", 
           headers: {
             Accept: "application/json",
           },

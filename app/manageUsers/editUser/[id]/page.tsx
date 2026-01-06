@@ -18,6 +18,12 @@ export default function EditUserPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    mobile: "",
+  });
+
   useEffect(() => {
     fetch(`http://nextjs-api.in/api/getUserData/${userId}`)
       .then((res) => res.json())
@@ -40,33 +46,58 @@ export default function EditUserPage() {
       ...user,
       [e.target.name]: e.target.value,
     });
+    setErrors({
+      ...errors,
+      [e.target.name]: "",
+    });
+  };
+  const validate = () => {
+    if (!user) return false;
+    const newErrors = { name: "", email: "", mobile: "" };
+    let isValid = true;
+    if (!user.name.trim()) {
+      newErrors.name = "Name is required";
+      isValid = false;
+    }
+    if (!user.email.trim()) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
+      newErrors.email = "Invalid email address";
+      isValid = false;
+    }
+    if (!user.mobile.trim()) {
+      newErrors.mobile = "Mobile number is required";
+      isValid = false;
+    } else if (!/^\d{10}$/.test(user.mobile)) {
+      newErrors.mobile = "Mobile number must be 10 digits";
+      isValid = false;
+    }
+    setErrors(newErrors);
+    return isValid;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
-
+    if (!user || !validate()) return;
     try {
-      const res = await fetch(
-        `http://nextjs-api.in/api/updateUser/${userId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            name: user.name,
-            email: user.email,
-            mobile: user.mobile,
-          }),
-        }
-      );
+      const res = await fetch(`http://nextjs-api.in/api/updateUser/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: user.name,
+          email: user.email,
+          mobile: user.mobile,
+        }),
+      });
       const data = await res.json();
       if (data.status) {
         router.push("/manageUsers");
       } else {
-        alert("Update failed!");
+        alert(data.message || "Update failed!");
       }
     } catch (err) {
       console.error(err);
@@ -94,8 +125,8 @@ export default function EditUserPage() {
                 placeholder="Enter Your Name"
                 value={user.name}
                 onChange={handleChange}
-                required
               />
+              {errors.name && <p style={{ color: "red" }}>{errors.name}</p>}
             </div>
           </div>
 
@@ -109,8 +140,8 @@ export default function EditUserPage() {
                 placeholder="Enter Your Email"
                 value={user.email}
                 onChange={handleChange}
-                required
               />
+              {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
             </div>
           </div>
 
@@ -125,19 +156,26 @@ export default function EditUserPage() {
                 value={user.mobile}
                 onChange={handleChange}
               />
+              {errors.mobile && <p style={{ color: "red" }}>{errors.mobile}</p>}
             </div>
           </div>
+
           <div className="control-group">
             <div className="controls">
-              <button  className="btn btn-primary" style={{ marginRight: "10px" }} type="submit">Submit</button>
-               <Link href="/manageUsers" className="btn btn-danger">
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ marginRight: "10px" }}
+              >
+                Submit
+              </button>
+              <Link href="/manageUsers" className="btn btn-danger">
                 Cancel
               </Link>
             </div>
           </div>
         </form>
       </div>
-
     </div>
   );
 }
