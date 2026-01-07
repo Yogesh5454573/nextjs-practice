@@ -9,12 +9,12 @@ export default function DashboardLayout({
 }) {
   return (
     <>
-      <Header />
+      <Header/>
       <div className="wrapper">
         <div className="container">
           <div className="row">
             <div className="span3">
-              <Sidebar />
+              <Sidebar/>
             </div>
             <div className="span9">
               <div className="content">{children}</div>
@@ -22,7 +22,7 @@ export default function DashboardLayout({
           </div>
         </div>
       </div>
-      <Footer />
+      <Footer/>
     </>
   );
 }
