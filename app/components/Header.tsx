@@ -32,7 +32,6 @@ export default function Header() {
                     >
                         <i className="icon-reorder shaded"></i>
                     </a>
-
                     <Link className="brand" href="/">
                         Edmin
                     </Link>
@@ -72,8 +71,6 @@ export default function Header() {
                             </li>
 
                             <li><a href="#">Support</a></li>
-
-                            {/* USER DROPDOWN */}
                             <li className="nav-user dropdown">
                                 <a href="#" className="dropdown-toggle" data-toggle="dropdown">
                                     <img
@@ -89,8 +86,6 @@ export default function Header() {
                                     <li><a href="#">Edit Profile</a></li>
                                     <li><a href="#">Account Settings</a></li>
                                     <li className="divider"></li>
-
-                                    {/* LOGOUT */}
                                     <li>
                                         <a href="#" onClick={handleLogout}>
                                             Logout
